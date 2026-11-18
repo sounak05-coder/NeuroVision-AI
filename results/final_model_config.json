@@ -1,0 +1,27 @@
+{
+    "project_name": "Brain Tumour Segmentation Using U-Net",
+    "model_name": "Brain_Tumor_U_Net",
+    "dataset": "LGG MRI Segmentation Dataset",
+    "modality": "FLAIR MRI",
+    "input_shape": [
+        256,
+        256,
+        1
+    ],
+    "output_shape": [
+        256,
+        256,
+        1
+    ],
+    "selected_threshold": 0.6,
+    "test_images": 331,
+    "metrics": {
+        "dice_score": 0.7799,
+        "iou_score": 0.6392,
+        "precision": 0.7442,
+        "sensitivity": 0.8191,
+        "specificity": 0.9963,
+        "mean_positive_image_dice": 0.6973
+    },
+    "negative_images_with_false_positives": 71
+}

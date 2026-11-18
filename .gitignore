@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# Local databases and session data
+*.db
+*.sqlite
+*.sqlite3
+results/segmentation_sessions/
+
+# Local logs
+*.log
+
+# Backup files
+*_backup*.py
+*before*.py
+backups/
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
