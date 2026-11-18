@@ -894,6 +894,43 @@ def render_animated_training_chart(
           font-weight: 700;
           opacity: 1;
         }
+
+        @media screen and (max-width: 600px) {
+          #chart {
+            height: 350px !important;
+            width: 100% !important;
+          }
+
+          .player {
+            gap: 8px;
+            padding: 5px 0;
+          }
+
+          #toggle {
+            width: 42px;
+            height: 42px;
+            font-size: 18px;
+          }
+
+          #status {
+            font-size: 12px;
+          }
+
+          .extra-controls {
+            gap: 6px;
+            padding: 5px 3px 8px;
+          }
+
+          .extra-controls button {
+            padding: 8px 9px;
+            font-size: 11px;
+            border-radius: 7px;
+          }
+
+          body {
+            overflow-x: hidden;
+          }
+        }
       </style>
     </head>
 
@@ -929,6 +966,53 @@ def render_animated_training_chart(
         const originalData = JSON.parse(JSON.stringify(figure.data));
         const originalLayout = JSON.parse(JSON.stringify(figure.layout));
         const originalFrames = JSON.parse(JSON.stringify(figure.frames || []));
+
+        // NEUROVISION MOBILE RESPONSIVE CHART FIX
+        function getResponsiveLayout() {
+          const layout = structuredClone(originalLayout);
+
+          if (window.innerWidth <= 600) {
+            // Mobile-only settings. Desktop retains the original layout.
+            layout.height = 390;
+            layout.margin = {l: 42, r: 12, t: 25, b: 140};
+            layout.font = {...layout.font, size: 10};
+
+            // The Streamlit section heading already identifies this chart.
+            if (layout.title) {
+              layout.title.text = "";
+            }
+
+            if (layout.xaxis) {
+              layout.xaxis.tickmode = "auto";
+              layout.xaxis.nticks = 5;
+              layout.xaxis.tickfont = {...layout.xaxis.tickfont, size: 9};
+              layout.xaxis.title.font = {...layout.xaxis.title.font, size: 10};
+            }
+
+            if (layout.yaxis) {
+              layout.yaxis.tickfont = {...layout.yaxis.tickfont, size: 9};
+              layout.yaxis.title.font = {...layout.yaxis.title.font, size: 10};
+            }
+
+            if (layout.legend) {
+              layout.legend.orientation = "h";
+              layout.legend.x = 0;
+              layout.legend.y = -0.43;              layout.legend.x = 0.5;
+              layout.legend.xanchor = "center";
+              layout.legend.font = {...layout.legend.font, size: 9};
+            }
+
+            if (layout.sliders && layout.sliders.length) {
+              layout.sliders[0].pad = {t: 15, b: 5};
+              layout.sliders[0].currentvalue.font = {size: 10};
+              layout.sliders[0].len = 0.88;
+              layout.sliders[0].x = 0.06;
+              layout.sliders[0].y = -0.18;
+            }
+          }
+
+          return layout;
+        }
 
         function updateButton(playing) {
           isPlaying = playing;
@@ -997,10 +1081,11 @@ def render_animated_training_chart(
         Plotly.newPlot(
           chart,
           JSON.parse(JSON.stringify(originalData)),
-          JSON.parse(JSON.stringify(originalLayout)),
+          getResponsiveLayout(),
           {
             responsive: true,
             displaylogo: false,
+            displayModeBar: window.innerWidth > 600,
             modeBarButtonsToRemove: ["zoom2d"]
           }
         ).then(() => {
@@ -1069,11 +1154,12 @@ def render_animated_training_chart(
             await Plotly.newPlot(
               chart,
               JSON.parse(JSON.stringify(originalData)),
-              JSON.parse(JSON.stringify(originalLayout)),
+              getResponsiveLayout(),
               {
                 responsive: true,
                 displaylogo: false,
-                modeBarButtonsToRemove: ["zoom2d"]
+                displayModeBar: window.innerWidth > 600,
+            modeBarButtonsToRemove: ["zoom2d"]
               }
             );
 
@@ -1910,7 +1996,6 @@ elif selected_page == "Model Performance":
             "U-Net Training and Validation Dice",
             "Dice Score"
         )
-
     else:
 
         st.warning(
@@ -2856,3 +2941,264 @@ if app_theme == "Light":
     }
     </style>
     """, unsafe_allow_html=True)
+
+
+# ============================================================
+# NEUROVISION AI - LIGHT EXPANDER AND CODE BLOCK FIX
+# ============================================================
+
+if app_theme == "Light":
+    st.markdown(
+        """
+        <style>
+
+        /* Session History and other native expanders */
+        [data-testid="stExpander"] {
+            background: #FFFFFF !important;
+            border: 1px solid #C9D9E8 !important;
+            border-radius: 12px !important;
+        }
+
+        [data-testid="stExpander"] summary,
+        [data-testid="stExpander"] summary p,
+        [data-testid="stExpander"] summary span {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+        }
+
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"] p,
+        [data-testid="stExpander"] [data-testid="stMarkdownContainer"] strong {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+        }
+
+        /* Session ID and native code blocks */
+        [data-testid="stCode"] {
+            background: #F1F6FB !important;
+            border: 1px solid #C9D9E8 !important;
+            border-radius: 9px !important;
+        }
+
+        [data-testid="stCode"] pre,
+        [data-testid="stCode"] code,
+        [data-testid="stCode"] span {
+            background: transparent !important;
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+        }
+
+        /* Inline code */
+        .stApp code {
+            color: #17324B !important;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True    )
+
+
+# ============================================================
+# NEUROVISION AI - LIGHT MODE COMPONENT CONTRAST FIX
+# ============================================================
+
+if app_theme == "Light":
+    st.markdown(
+        """
+        <style>
+
+        /* EXPANDER: force a light surface and readable text */
+        .stApp [data-testid="stExpander"],
+        .stApp details[data-testid="stExpander"],
+        .stApp [data-testid="stExpander"] details {
+            background-color: #FFFFFF !important;
+            background: #FFFFFF !important;
+            border: 1px solid #C9D9E8 !important;
+            border-radius: 12px !important;
+        }
+
+        .stApp [data-testid="stExpander"] summary,
+        .stApp [data-testid="stExpander"] summary *,
+        .stApp [data-testid="stExpander"] summary p,
+        .stApp [data-testid="stExpander"] summary span {
+            background-color: #FFFFFF !important;
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+            opacity: 1 !important;
+        }
+
+        .stApp [data-testid="stExpander"] [data-testid="stMarkdownContainer"],
+        .stApp [data-testid="stExpander"] [data-testid="stMarkdownContainer"] *,
+        .stApp [data-testid="stExpander"] [data-testid="stVerticalBlock"] {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+        }
+
+        /* SESSION ID: Streamlit code block */
+        .stApp [data-testid="stCodeBlock"],
+        .stApp [data-testid="stCode"],
+        .stApp .stCodeBlock {
+            background-color: #F1F6FB !important;
+            background: #F1F6FB !important;
+            border: 1px solid #C9D9E8 !important;
+            border-radius: 9px !important;
+        }
+
+        .stApp [data-testid="stCodeBlock"] pre,
+        .stApp [data-testid="stCodeBlock"] code,
+        .stApp [data-testid="stCodeBlock"] span,
+        .stApp [data-testid="stCode"] pre,
+        .stApp [data-testid="stCode"] code,
+        .stApp [data-testid="stCode"] span {
+            background-color: transparent !important;
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+        }
+
+        /* SEARCH INPUT */
+        .stApp [data-testid="stTextInput"] input,
+        .stApp [data-baseweb="input"] input {
+            background-color: #FFFFFF !important;
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+            border-color: #B8CCDD !important;
+        }
+
+        .stApp [data-testid="stTextInput"] input::placeholder,
+        .stApp [data-baseweb="input"] input::placeholder {
+            color: #71869A !important;
+            -webkit-text-fill-color: #71869A !important;
+            opacity: 1 !important;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# ============================================================
+# NEUROVISION AI - LIGHT MODE NOTIFICATION READABILITY FIX
+# ============================================================
+
+if app_theme == "Light":
+    st.markdown(
+        """
+        <style>
+
+        /* Readable text inside all Streamlit notifications */
+        .stApp [data-testid="stAlert"],
+        .stApp [data-testid="stAlert"] p,
+        .stApp [data-testid="stAlert"] span,
+        .stApp [data-testid="stAlert"] strong,
+        .stApp [data-testid="stAlert"] label,
+        .stApp [data-testid="stAlert"] [data-testid="stMarkdownContainer"],
+        .stApp [data-testid="stAlert"] [data-testid="stMarkdownContainer"] *,
+        .stApp [data-testid="stAlert"] div {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+            opacity: 1 !important;
+            text-shadow: none !important;
+        }
+
+        /* Keep notification icons visible */
+        .stApp [data-testid="stAlert"] svg {
+            color: #17324B !important;
+            fill: currentColor !important;
+        }
+
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+
+# NEUROVISION AI - LIGHT MODE ALERT BACKGROUND FIX
+if app_theme == "Light":
+    st.markdown(
+        """
+        <style>
+        /* Success notification */
+        .stApp [data-testid="stAlert"][kind="success"] {
+            background: #E7F7EF !important;
+            border: 1px solid #9BD9B5 !important;
+        }
+
+        /* Warning notification */
+        .stApp [data-testid="stAlert"][kind="warning"] {
+            background: #FFF4D6 !important;
+            border: 1px solid #E8CB78 !important;
+        }
+
+        /* Information notification */
+        .stApp [data-testid="stAlert"][kind="info"] {
+            background: #E7F3FC !important;
+            border: 1px solid #A9CDEB !important;
+        }
+
+        /* Error notification */
+        .stApp [data-testid="stAlert"][kind="error"] {
+            background: #FCEBEC !important;
+            border: 1px solid #E7A6AA !important;
+        }
+
+        .stApp [data-testid="stAlert"] {
+            border-radius: 10px !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+
+# NEUROVISION AI - FINAL LIGHT MODE CONTRAST OVERRIDE
+if app_theme == "Light":
+    st.markdown(
+        """
+        <style>
+        /* All Streamlit notifications */
+        .stApp [data-testid="stAlert"] {
+            background-color: #EAF4FC !important;
+            border: 1px solid #B8D5EA !important;
+            border-radius: 10px !important;
+        }
+
+        .stApp [data-testid="stAlert"] > div {
+            background-color: transparent !important;
+        }
+
+        .stApp [data-testid="stAlert"],
+        .stApp [data-testid="stAlert"] p,
+        .stApp [data-testid="stAlert"] span,
+        .stApp [data-testid="stAlert"] strong,
+        .stApp [data-testid="stAlert"] div,
+        .stApp [data-testid="stAlert"] [data-testid="stMarkdownContainer"] * {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+            opacity: 1 !important;
+        }
+
+        /* File uploader dropzone */
+        .stApp [data-testid="stFileUploaderDropzone"] {
+            background-color: #F7FBFF !important;
+            border: 1px dashed #80B9DD !important;
+            border-radius: 10px !important;
+        }
+
+        .stApp [data-testid="stFileUploaderDropzone"] *,
+        .stApp [data-testid="stFileUploaderDropzoneInstructions"],
+        .stApp [data-testid="stFileUploaderDropzoneInstructions"] * {
+            color: #17324B !important;
+            -webkit-text-fill-color: #17324B !important;
+            opacity: 1 !important;
+        }
+
+        .stApp [data-testid="stFileUploaderDropzone"] button {
+            color: #FFFFFF !important;
+            -webkit-text-fill-color: #FFFFFF !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
